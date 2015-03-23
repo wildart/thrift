@@ -126,6 +126,7 @@ if test "$enable_libs" = "no"; then
   with_d="no"
   with_nodejs="no"
   with_lua="no"
+  with_julia="no"
 fi
 
 
@@ -242,6 +243,16 @@ if test "$with_nodejs" = "yes"; then
 fi
 AM_CONDITIONAL(WITH_NODEJS, [test "$have_nodejs" = "yes"])
 AM_CONDITIONAL(HAVE_NPM, [test "x$NPM" != "x"])
+
+AX_THRIFT_LIB(julia, [Julia], yes)
+have_julia=no
+if test "$with_julia" = "yes"; then
+  AC_PATH_PROG([JULIA], [julia])
+  if test "x$JULIA" != "x"; then
+    have_julia="yes"
+  fi
+fi
+AM_CONDITIONAL(WITH_JULIA, [test "$have_julia" = "yes"])
 
 AX_THRIFT_LIB(lua, [Lua], yes)
 have_lua=no
@@ -685,6 +696,7 @@ AC_CONFIG_FILES([
   lib/java/Makefile
   lib/js/test/Makefile
   lib/nodejs/Makefile
+  lib/julia/Makefile
   lib/perl/Makefile
   lib/perl/test/Makefile
   lib/php/Makefile
@@ -741,6 +753,7 @@ echo "Building Go Library .......... : $have_go"
 echo "Building D Library ........... : $have_d"
 echo "Building NodeJS Library ...... : $have_nodejs"
 echo "Building Lua Library ......... : $have_lua"
+echo "Building Julia Library ....... : $have_julia"
 
 if test "$have_cpp" = "yes" ; then
   echo
@@ -823,6 +836,12 @@ if test "$have_lua" = "yes" ; then
   echo
   echo "Lua Library:"
   echo "   Using Lua .............. : $LUA"
+fi
+if test "$have_julia" = "yes" ; then
+  echo
+  echo "Julia Library:"
+  echo "   Using Julia .............. : $JULIA"
+  echo "   Using Julia version....... : $($JULIA --version)"
 fi
 echo
 echo "If something is missing that you think should be present,"
